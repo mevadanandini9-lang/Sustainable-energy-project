@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sustainable Tokens for AI — Energy Efficiency</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --teal-deep: #0d4a47;
+    --teal-mid: #1a7a6e;
+    --teal-bright: #2ab5a0;
+    --teal-glow: #3dd6be;
+    --mint: #a8f0e0;
+    --cream: #f2f7f5;
+    --dark: #0a1f1e;
+    --text: #1c3835;
+    --muted: #4d7a75;
+    --white: #ffffff;
+    --accent: #e8ff5a;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Mono', monospace;
+    background: var(--dark);
+    color: var(--white);
+    overflow-x: hidden;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.2rem 4rem;
+    background: rgba(10, 31, 30, 0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(58, 214, 190, 0.1);
+  }
+  .nav-logo {
+    display: flex; align-items: center; gap: .6rem;
+    font-family: 'Syne', sans-serif; font-weight: 800; font-size: .9rem;
+    letter-spacing: .08em; color: var(--teal-glow);
+  }
+  .nav-logo .leaf { font-size: 1.2rem; }
+  .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+  .nav-links a {
+    color: rgba(255,255,255,.55); font-size: .75rem; letter-spacing: .1em;
+    text-transform: uppercase; text-decoration: none;
+    transition: color .25s;
+  }
+  .nav-links a:hover { color: var(--teal-glow); }
+
+  /* ── HERO ── */
+  #hero {
+    min-height: 100vh; position: relative;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+  }
+  .hero-bg {
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 50% 40%, rgba(26,122,110,.35) 0%, transparent 70%),
+                radial-gradient(ellipse 40% 40% at 80% 20%, rgba(61,214,190,.12) 0%, transparent 60%),
+                var(--dark);
+  }
+  .grid-overlay {
+    position: absolute; inset: 0; pointer-events: none;
+    background-image: linear-gradient(rgba(58,214,190,.04) 1px, transparent 1px),
+                      linear-gradient(90deg, rgba(58,214,190,.04) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+  .hero-content {
+    position: relative; text-align: center; max-width: 900px; padding: 2rem;
+  }
+  .hero-tag {
+    display: inline-block;
+    background: rgba(61,214,190,.12); border: 1px solid rgba(61,214,190,.3);
+    color: var(--teal-glow); font-size: .7rem; letter-spacing: .18em;
+    text-transform: uppercase; padding: .4rem 1.2rem; border-radius: 2rem;
+    margin-bottom: 2rem;
+    animation: fadeUp .8s ease both;
+  }
+  .hero-title {
+    font-family: 'Syne', sans-serif; font-weight: 800;
+    font-size: clamp(3rem, 8vw, 7rem); line-height: 1;
+    letter-spacing: -.02em;
+    animation: fadeUp .8s .15s ease both;
+  }
+  .hero-title .accent-word { color: var(--teal-glow); }
+  .hero-title .serif-word { font-family: 'Instrument Serif', serif; font-style: italic; font-weight: 400; }
+  .hero-subtitle {
+    margin: 1.5rem auto 3rem;
+    max-width: 560px; font-size: .9rem; line-height: 1.7;
+    color: rgba(255,255,255,.5);
+    animation: fadeUp .8s .3s ease both;
+  }
+  .hero-cta {
+    display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;
+    animation: fadeUp .8s .45s ease both;
+  }
+  .btn-primary {
+    background: var(--teal-glow); color: var(--dark);
+    border: none; padding: .85rem 2.2rem; border-radius: 3rem;
+    font-family: 'Syne', sans-serif; font-weight: 700; font-size: .85rem;
+    letter-spacing: .06em; cursor: pointer; text-decoration: none;
+    transition: transform .2s, box-shadow .2s;
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(61,214,190,.4); }
+  .btn-ghost {
+    background: transparent; color: var(--white);
+    border: 1px solid rgba(255,255,255,.2); padding: .85rem 2.2rem; border-radius: 3rem;
+    font-family: 'Syne', sans-serif; font-weight: 600; font-size: .85rem;
+    letter-spacing: .06em; cursor: pointer; text-decoration: none;
+    transition: border-color .2s, color .2s;
+  }
+  .btn-ghost:hover { border-color: var(--teal-glow); color: var(--teal-glow); }
+
+  .scroll-hint {
+    position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center; gap: .5rem;
+    color: rgba(255,255,255,.3); font-size: .65rem; letter-spacing: .15em; text-transform: uppercase;
+    animation: fadeUp .8s .8s ease both;
+  }
+  .scroll-line {
+    width: 1px; height: 50px;
+    background: linear-gradient(to bottom, rgba(61,214,190,.6), transparent);
+    animation: scrollPulse 1.8s infinite;
+  }
+
+  /* ── STATS STRIP ── */
+  .stats-strip {
+    background: var(--teal-deep);
+    padding: 3rem 4rem;
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px;
+    border-top: 1px solid rgba(61,214,190,.15);
+    border-bottom: 1px solid rgba(61,214,190,.15);
+  }
+  .stat-item {
+    padding: 1.5rem 2rem; text-align: center;
+    border-right: 1px solid rgba(61,214,190,.15);
+  }
+  .stat-item:last-child { border-right: none; }
+  .stat-number {
+    font-family: 'Syne', sans-serif; font-weight: 800;
+    font-size: 2.8rem; color: var(--teal-glow); line-height: 1;
+    display: block;
+  }
+  .stat-label { font-size: .7rem; color: rgba(255,255,255,.45); letter-spacing: .1em; margin-top: .5rem; display: block; }
+
+  /* ── SECTION BASE ── */
+  section { padding: 7rem 4rem; }
+  .section-eyebrow {
+    font-size: .7rem; letter-spacing: .2em; text-transform: uppercase;
+    color: var(--teal-glow); margin-bottom: 1rem;
+    display: flex; align-items: center; gap: .8rem;
+  }
+  .section-eyebrow::before {
+    content: ''; width: 2rem; height: 1px; background: var(--teal-glow);
+  }
+  .section-title {
+    font-family: 'Syne', sans-serif; font-weight: 800;
+    font-size: clamp(2rem, 4vw, 3.5rem); line-height: 1.1;
+    margin-bottom: 1.5rem;
+  }
+  .section-body {
+    font-size: .9rem; line-height: 1.8; color: rgba(255,255,255,.55);
+    max-width: 560px;
+  }
+
+  /* ── CRISIS SECTION ── */
+  #crisis { background: var(--dark); }
+  .crisis-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 5rem;
+    align-items: center; margin-top: 4rem;
+  }
+  .cards-2x2 {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;
+  }
+  .card {
+    background: rgba(26,122,110,.08);
+    border: 1px solid rgba(61,214,190,.12);
+    border-radius: 1rem; padding: 1.8rem;
+    transition: border-color .3s, transform .3s;
+    position: relative; overflow: hidden;
+  }
+  .card::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(circle at top left, rgba(61,214,190,.06), transparent 60%);
+    opacity: 0; transition: opacity .3s;
+  }
+  .card:hover { border-color: rgba(61,214,190,.35); transform: translateY(-3px); }
+  .card:hover::before { opacity: 1; }
+  .card-num {
+    font-family: 'Syne', sans-serif; font-weight: 800;
+    font-size: 2rem; color: rgba(61,214,190,.25); line-height: 1;
+    margin-bottom: .8rem;
+  }
+  .card h3 { font-family: 'Syne', sans-serif; font-size: .95rem; font-weight: 700; margin-bottom: .5rem; }
+  .card p { font-size: .78rem; line-height: 1.6; color: rgba(255,255,255,.45); }
+
+  /* ── MODELS SECTION ── */
+  #models { background: #0b2422; }
+  .models-layout { display: grid; grid-template-columns: 1fr 1.5fr; gap: 5rem; align-items: start; margin-top: 4rem; }
+  .model-bars { display: flex; flex-direction: column; gap: 1.5rem; }
+  .model-bar-item {}
+  .model-bar-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: .5rem; }
+  .model-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: .9rem; }
+  .model-value { font-size: .75rem; color: var(--teal-glow); }
+  .bar-track {
+    height: 8px; background: rgba(255,255,255,.07); border-radius: 4px; overflow: hidden;
+  }
+  .bar-fill {
+    height: 100%; border-radius: 4px;
+    background: linear-gradient(90deg, var(--teal-mid), var(--teal-glow));
+    width: 0; transition: width 1.5s cubic-bezier(.16,1,.3,1);
+  }
+  .model-sub { font-size: .7rem; color: rgba(255,255,255,.35); margin-top: .3rem; }
+
+  .model-table { border: 1px solid rgba(61,214,190,.12); border-radius: 1rem; overflow: hidden; }
+  .model-table table { width: 100%; border-collapse: collapse; }
+  .model-table th {
+    background: rgba(61,214,190,.08);
+    font-size: .65rem; letter-spacing: .12em; text-transform: uppercase;
+    color: var(--teal-glow); padding: 1rem 1.2rem; text-align: left;
+    border-bottom: 1px solid rgba(61,214,190,.12);
+  }
+  .model-table td {
+    padding: 1rem 1.2rem; font-size: .78rem; color: rgba(255,255,255,.65);
+    border-bottom: 1px solid rgba(255,255,255,.04);
+  }
+  .model-table tr:last-child td { border-bottom: none; }
+  .model-table tr:hover td { background: rgba(61,214,190,.04); color: var(--white); }
+  .co2-badge {
+    display: inline-block; padding: .2rem .6rem; border-radius: .3rem; font-size: .7rem;
+    background: rgba(61,214,190,.12); color: var(--teal-glow);
+  }
+
+  /* ── ENVIRONMENT SECTION ── */
+  #environment { background: var(--dark); }
+  .env-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; margin-top: 4rem; }
+  .env-card {
+    background: linear-gradient(135deg, rgba(26,122,110,.2), rgba(13,74,71,.3));
+    border: 1px solid rgba(61,214,190,.15);
+    border-radius: 1.2rem; padding: 2.5rem;
+  }
+  .env-card h3 { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.1rem; margin-bottom: 1.5rem; color: var(--teal-glow); }
+  .env-list { list-style: none; display: flex; flex-direction: column; gap: .8rem; }
+  .env-list li {
+    font-size: .82rem; color: rgba(255,255,255,.6); line-height: 1.5;
+    display: flex; gap: .8rem; align-items: flex-start;
+  }
+  .env-list li::before { content: '→'; color: var(--teal-glow); flex-shrink: 0; }
+  .big-stat {
+    text-align: center; padding: 3rem 2rem;
+    background: linear-gradient(135deg, rgba(13,74,71,.5), rgba(10,31,30,.8));
+    border: 1px solid rgba(61,214,190,.2); border-radius: 1.2rem;
+  }
+  .big-stat .num {
+    font-family: 'Syne', sans-serif; font-weight: 800;
+    font-size: 5rem; color: var(--teal-glow); line-height: 1; display: block;
+  }
+  .big-stat .label { font-size: .8rem; color: rgba(255,255,255,.45); margin-top: .5rem; display: block; }
+
+  /* ── TOKEN OPT SECTION ── */
+  #optimization { background: #0b2422; }
+  .opt-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 4rem; }
+  .opt-card {
+    background: rgba(10,31,30,.6); border: 1px solid rgba(61,214,190,.12);
+    border-radius: 1rem; padding: 2rem;
+    transition: all .3s; position: relative; overflow: hidden;
+  }
+  .opt-card::after {
+    content: ''; position: absolute; bottom: 0; left: 0; right: 0;
+    height: 3px; background: linear-gradient(90deg, var(--teal-mid), var(--teal-glow));
+    transform: scaleX(0); transition: transform .3s; transform-origin: left;
+  }
+  .opt-card:hover { border-color: rgba(61,214,190,.3); }
+  .opt-card:hover::after { transform: scaleX(1); }
+  .opt-icon { font-size: 1.8rem; margin-bottom: 1rem; }
+  .opt-card h3 { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1rem; margin-bottom: .6rem; }
+  .opt-card p { font-size: .78rem; line-height: 1.7; color: rgba(255,255,255,.45); margin-bottom: 1rem; }
+  .opt-saving {
+    font-size: .7rem; color: var(--teal-glow); letter-spacing: .08em;
+    border-top: 1px solid rgba(61,214,190,.1); padding-top: .8rem;
+  }
+
+  /* ── COMPRESSION SECTION ── */
+  #compression { background: var(--dark); }
+  .compression-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; margin-top: 4rem; }
+  .comp-card {
+    border: 1px solid rgba(61,214,190,.12); border-radius: 1rem; padding: 2rem;
+    background: rgba(26,122,110,.06);
+    transition: all .3s;
+  }
+  .comp-card:hover { background: rgba(26,122,110,.14); border-color: rgba(61,214,190,.3); }
+  .comp-num {
+    font-family: 'Syne', sans-serif; font-weight: 800; font-size: 3rem;
+    color: rgba(61,214,190,.2); line-height: 1; margin-bottom: .8rem;
+  }
+  .comp-card h3 { font-family: 'Syne', sans-serif; font-weight: 700; font-size: .95rem; margin-bottom: .8rem; color: var(--teal-glow); }
+  .comp-card p { font-size: .78rem; line-height: 1.6; color: rgba(255,255,255,.45); }
+
+  /* ── REAL WORLD ── */
+  #realworld { background: #0b2422; }
+  .rw-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 4rem; }
+  .rw-card {
+    background: rgba(10,31,30,.7); border: 1px solid rgba(61,214,190,.12);
+    border-radius: 1.2rem; padding: 2.5rem;
+    display: flex; flex-direction: column; gap: 1.2rem;
+  }
+  .rw-card-header { display: flex; justify-content: space-between; align-items: flex-start; }
+  .rw-logo {
+    font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.1rem; color: var(--teal-glow);
+  }
+  .rw-badge {
+    background: rgba(61,214,190,.12); color: var(--teal-glow);
+    font-size: .7rem; letter-spacing: .08em; padding: .3rem .8rem; border-radius: 2rem;
+  }
+  .rw-card p { font-size: .82rem; line-height: 1.7; color: rgba(255,255,255,.5); }
+  .rw-metric {
+    font-family: 'Syne', sans-serif; font-weight: 800; font-size: 2.5rem; color: var(--teal-glow); line-height: 1;
+  }
+  .rw-metric-label { font-size: .7rem; color: rgba(255,255,255,.35); margin-top: .2rem; }
+
+  /* ── ROADMAP ── */
+  #roadmap { background: var(--dark); }
+  .roadmap-steps { display: flex; gap: 0; margin-top: 4rem; position: relative; }
+  .roadmap-steps::before {
+    content: ''; position: absolute; top: 2.5rem; left: 2rem; right: 2rem;
+    height: 1px; background: linear-gradient(90deg, transparent, var(--teal-mid), var(--teal-mid), transparent);
+    z-index: 0;
+  }
+  .roadmap-step { flex: 1; padding: 0 1.5rem; position: relative; z-index: 1; }
+  .step-dot {
+    width: 1.2rem; height: 1.2rem; border-radius: 50%;
+    background: var(--teal-glow); border: 3px solid var(--dark);
+    margin: 0 auto 1.5rem; box-shadow: 0 0 16px rgba(61,214,190,.5);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .step-week {
+    text-align: center; font-size: .65rem; color: var(--teal-glow); letter-spacing: .15em;
+    text-transform: uppercase; margin-bottom: 1rem;
+  }
+  .step-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: .9rem; margin-bottom: .6rem; text-align: center; }
+  .step-desc { font-size: .75rem; line-height: 1.6; color: rgba(255,255,255,.4); text-align: center; }
+
+  /* ── ACTIONS ── */
+  #actions { background: linear-gradient(135deg, var(--teal-deep), #0a2f2d); }
+  .actions-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; margin-top: 4rem; }
+  .action-card {
+    background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1);
+    border-radius: 1rem; padding: 2rem;
+    transition: all .3s;
+  }
+  .action-card:hover { background: rgba(255,255,255,.09); border-color: rgba(61,214,190,.3); }
+  .action-icon { font-size: 2rem; margin-bottom: 1rem; }
+  .action-card h3 { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1rem; margin-bottom: .6rem; }
+  .action-card p { font-size: .8rem; line-height: 1.7; color: rgba(255,255,255,.5); }
+
+  /* ── FOOTER ── */
+  footer {
+    background: #060f0f; padding: 4rem;
+    text-align: center; border-top: 1px solid rgba(61,214,190,.1);
+  }
+  .footer-leaf { font-size: 2.5rem; margin-bottom: 1rem; display: block; }
+  .footer-title { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.4rem; margin-bottom: .5rem; }
+  .footer-sub { font-size: .8rem; color: rgba(255,255,255,.35); margin-bottom: 2rem; }
+  .footer-meta { font-size: .72rem; color: rgba(255,255,255,.25); letter-spacing: .08em; line-height: 1.9; }
+  .footer-meta span { color: rgba(61,214,190,.6); }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes scrollPulse {
+    0%, 100% { opacity: .3; }
+    50% { opacity: .9; }
+  }
+  .reveal {
+    opacity: 0; transform: translateY(30px);
+    transition: opacity .8s ease, transform .8s ease;
+  }
+  .reveal.visible { opacity: 1; transform: none; }
+  .reveal-delay-1 { transition-delay: .1s; }
+  .reveal-delay-2 { transition-delay: .2s; }
+  .reveal-delay-3 { transition-delay: .3s; }
+  .reveal-delay-4 { transition-delay: .4s; }
+
+  @media (max-width: 900px) {
+    nav { padding: 1rem 1.5rem; }
+    .nav-links { display: none; }
+    section { padding: 5rem 1.5rem; }
+    .stats-strip { grid-template-columns: repeat(2, 1fr); padding: 2rem 1.5rem; }
+    .stat-item { border-right: none; border-bottom: 1px solid rgba(61,214,190,.12); padding: 1.2rem; }
+    .crisis-grid, .models-layout, .env-layout, .rw-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+    .opt-grid { grid-template-columns: 1fr 1fr; }
+    .compression-grid { grid-template-columns: 1fr 1fr; }
+    .roadmap-steps { flex-direction: column; gap: 2rem; }
+    .roadmap-steps::before { display: none; }
+    .actions-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo"><span class="leaf">🌿</span>Sustainable Tokens</div>
+  <ul class="nav-links">
+    <li><a href="#crisis">Crisis</a></li>
+    <li><a href="#models">Models</a></li>
+    <li><a href="#optimization">Optimization</a></li>
+    <li><a href="#compression">Compression</a></li>
+    <li><a href="#realworld">Case Studies</a></li>
+    <li><a href="#roadmap">Roadmap</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="grid-overlay"></div>
+  <div class="hero-content">
+    <span class="hero-tag">Semester 4 · Division E · Mevada Nandini · 2501442052</span>
+    <h1 class="hero-title">
+      <span class="serif-word">Sustainable</span><br>
+      <span class="accent-word">Tokens</span> for AI
+    </h1>
+    <p class="hero-subtitle">
+      Exploring energy efficiency in large language models — from token optimization
+      to model compression — to build a greener AI future.
+    </p>
+    <div class="hero-cta">
+      <a href="#crisis" class="btn-primary">Explore Project</a>
+      <a href="#actions" class="btn-ghost">Key Actions</a>
+    </div>
+  </div>
+  <div class="scroll-hint">
+    <div class="scroll-line"></div>
+    <span>Scroll</span>
+  </div>
+</section>
+
+<!-- STATS STRIP -->
+<div class="stats-strip">
+  <div class="stat-item">
+    <span class="stat-number" data-target="1287">0</span>
+    <span class="stat-label">MWh — GPT-3 training energy</span>
+  </div>
+  <div class="stat-item">
+    <span class="stat-number" data-target="552">0</span>
+    <span class="stat-label">tons CO₂ from GPT-3 training</span>
+  </div>
+  <div class="stat-item">
+    <span class="stat-number" data-target="3.5" data-suffix="%">0</span>
+    <span class="stat-label">of global electricity — AI by 2030</span>
+  </div>
+  <div class="stat-item">
+    <span class="stat-number" data-target="50" data-suffix="%">0</span>
+    <span class="stat-label">max energy savings achievable</span>
+  </div>
+</div>
+
+<!-- CRISIS -->
+<section id="crisis">
+  <div class="section-eyebrow">The Problem</div>
+  <h2 class="section-title">AI Energy<br>Consumption Crisis</h2>
+  <div class="crisis-grid">
+    <div>
+      <p class="section-body">
+        AI systems consume massive energy during both training and inference phases,
+        creating significant environmental impacts and growing carbon footprint concerns worldwide.
+        Tokens are the fundamental unit — more tokens mean more computation and more energy.
+      </p>
+    </div>
+    <div class="cards-2x2">
+      <div class="card reveal">
+        <div class="card-num">01</div>
+        <h3>Training Phase</h3>
+        <p>GPT-3 consumed 1,287 MWh, emitting ~552 tons of CO₂.</p>
+      </div>
+      <div class="card reveal reveal-delay-1">
+        <div class="card-num">02</div>
+        <h3>Inference Phase</h3>
+        <p>Millions of daily queries consume energy per token processed.</p>
+      </div>
+      <div class="card reveal reveal-delay-2">
+        <div class="card-num">03</div>
+        <h3>Token Processing</h3>
+        <p>Tokens are text units — more tokens mean more computation and energy use.</p>
+      </div>
+      <div class="card reveal reveal-delay-3">
+        <div class="card-num">04</div>
+        <h3>Future Impact</h3>
+        <p>AI projected to consume 3.5% of global electricity by 2030.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MODELS -->
+<section id="models">
+  <div class="section-eyebrow">Energy Data</div>
+  <h2 class="section-title">Model Energy<br>Comparison</h2>
+  <div class="models-layout">
+    <div class="model-bars reveal">
+      <div class="model-bar-item">
+        <div class="model-bar-header">
+          <span class="model-name">BERT Base</span>
+          <span class="model-value">1.5 MWh</span>
+        </div>
+        <div class="bar-track"><div class="bar-fill" data-width="1"></div></div>
+        <div class="model-sub">110M parameters · 0.65t CO₂</div>
+      </div>
+      <div class="model-bar-item">
+        <div class="model-bar-header">
+          <span class="model-name">LLaMA-2</span>
+          <span class="model-value">539 MWh</span>
+        </div>
+        <div class="bar-track"><div class="bar-fill" data-width="42"></div></div>
+        <div class="model-sub">70B parameters · 173t CO₂</div>
+      </div>
+      <div class="model-bar-item">
+        <div class="model-bar-header">
+          <span class="model-name">GPT-3</span>
+          <span class="model-value">1,287 MWh</span>
+        </div>
+        <div class="bar-track"><div class="bar-fill" data-width="65"></div></div>
+        <div class="model-sub">175B parameters · 552t CO₂</div>
+      </div>
+      <div class="model-bar-item">
+        <div class="model-bar-header">
+          <span class="model-name">GPT-4</span>
+          <span class="model-value">50–100× GPT-3</span>
+        </div>
+        <div class="bar-track"><div class="bar-fill" data-width="100"></div></div>
+        <div class="model-sub">~1.76T parameters · 25,000+ t CO₂</div>
+      </div>
+    </div>
+    <div class="model-table reveal reveal-delay-1">
+      <table>
+        <thead>
+          <tr>
+            <th>Model</th>
+            <th>Energy (MWh)</th>
+            <th>CO₂ (tons)</th>
+            <th>Params</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>BERT Base</td>
+            <td>1.5</td>
+            <td><span class="co2-badge">0.65</span></td>
+            <td>110M</td>
+          </tr>
+          <tr>
+            <td>LLaMA-2</td>
+            <td>539</td>
+            <td><span class="co2-badge">173</span></td>
+            <td>70B</td>
+          </tr>
+          <tr>
+            <td>GPT-3</td>
+            <td>1,287</td>
+            <td><span class="co2-badge">552</span></td>
+            <td>175B</td>
+          </tr>
+          <tr>
+            <td>GPT-4</td>
+            <td>50–100× GPT-3</td>
+            <td><span class="co2-badge">25,000+</span></td>
+            <td>~1.76T</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ENVIRONMENT -->
+<section id="environment">
+  <div class="section-eyebrow">Environmental Impact</div>
+  <h2 class="section-title">Carbon Footprint<br>Analysis</h2>
+  <div class="env-layout">
+    <div class="env-card reveal">
+      <h3>Carbon Footprint</h3>
+      <ul class="env-list">
+        <li>1 large AI model = 5 cars' entire lifetime CO₂ emissions</li>
+        <li>AI industry footprint growing exponentially year-over-year</li>
+        <li>Data centers add ~40% extra energy overhead for cooling alone</li>
+        <li>NVIDIA A100 GPU draws 400W per unit at full load</li>
+      </ul>
+    </div>
+    <div class="env-card reveal reveal-delay-1">
+      <h3>Industry Comparison</h3>
+      <ul class="env-list">
+        <li>AI Training: 552+ tons CO₂ per large model</li>
+        <li>Commercial Aviation: ~915 million tons per year</li>
+        <li>Crypto Mining: ~65 million tons per year</li>
+        <li>AI projected at 3.5% of global electricity by 2030</li>
+      </ul>
+    </div>
+    <div class="big-stat reveal">
+      <span class="num">5×</span>
+      <span class="label">Cars' lifetime CO₂ per large model trained</span>
+    </div>
+    <div class="big-stat reveal reveal-delay-1">
+      <span class="num">40%</span>
+      <span class="label">Extra energy overhead from data center cooling</span>
+    </div>
+  </div>
+</section>
+
+<!-- TOKEN OPTIMIZATION -->
+<section id="optimization">
+  <div class="section-eyebrow">Solutions</div>
+  <h2 class="section-title">Token Optimization<br>Methods</h2>
+  <p class="section-body">Five proven approaches to reduce token count and energy consumption without sacrificing output quality.</p>
+  <div class="opt-grid">
+    <div class="opt-card reveal">
+      <div class="opt-icon">✍️</div>
+      <h3>Prompt Engineering</h3>
+      <p>Concise prompts, eliminating redundancy, optimized system messages that convey the same intent in fewer tokens.</p>
+      <div class="opt-saving">↓ 30–50% token reduction · Low difficulty</div>
+    </div>
+    <div class="opt-card reveal reveal-delay-1">
+      <div class="opt-icon">🪟</div>
+      <h3>Context Window Management</h3>
+      <p>Limit to relevant information, sliding windows, and dynamic pruning to keep only what matters in context.</p>
+      <div class="opt-saving">↓ 20–40% token reduction · Moderate</div>
+    </div>
+    <div class="opt-card reveal reveal-delay-2">
+      <div class="opt-icon">✂️</div>
+      <h3>Token Pruning</h3>
+      <p>Remove stop words, compress repeated patterns, apply smart truncation strategies to trim noise.</p>
+      <div class="opt-saving">↓ 15–25% energy savings · Low cost</div>
+    </div>
+    <div class="opt-card reveal">
+      <div class="opt-icon">🔤</div>
+      <h3>Smarter Tokenization</h3>
+      <p>Subword methods like BPE and WordPiece, vocabulary optimization to encode information more densely.</p>
+      <div class="opt-saving">Foundational efficiency gain</div>
+    </div>
+    <div class="opt-card reveal reveal-delay-1">
+      <div class="opt-icon">📦</div>
+      <h3>Batch Processing</h3>
+      <p>Group similar requests together, improve throughput, and reduce computational overhead per query.</p>
+      <div class="opt-saving">↑ 25–35% throughput improvement · Medium</div>
+    </div>
+    <div class="opt-card reveal reveal-delay-2" style="background: rgba(61,214,190,.07); border-color: rgba(61,214,190,.25);">
+      <div class="opt-icon">🎯</div>
+      <h3>Combined Approach</h3>
+      <p>Layer all methods together: prompt + context + pruning + batching for cumulative gains that stack.</p>
+      <div class="opt-saving">↓ Up to 50% maximum achievable savings</div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPRESSION -->
+<section id="compression">
+  <div class="section-eyebrow">Architecture</div>
+  <h2 class="section-title">Model Compression<br>Techniques</h2>
+  <p class="section-body">Compression methods reduce model size while maintaining performance — achieving 50–90% parameter reduction and up to 75% memory savings.</p>
+  <div class="compression-grid">
+    <div class="comp-card reveal">
+      <div class="comp-num">01</div>
+      <h3>Parameter Pruning</h3>
+      <p>Remove 50–90% of parameters with minimal accuracy loss by identifying and eliminating redundant weights.</p>
+    </div>
+    <div class="comp-card reveal reveal-delay-1">
+      <div class="comp-num">02</div>
+      <h3>Quantization</h3>
+      <p>INT8/INT4 precision reduces memory by 75% and significantly speeds up inference with minimal quality drop.</p>
+    </div>
+    <div class="comp-card reveal reveal-delay-2">
+      <div class="comp-num">03</div>
+      <h3>Knowledge Distillation</h3>
+      <p>DistilBERT: 40% smaller, 60% faster, and 97% of original accuracy retained through teacher-student training.</p>
+    </div>
+    <div class="comp-card reveal reveal-delay-3">
+      <div class="comp-num">04</div>
+      <h3>Sparse Models (MoE)</h3>
+      <p>Mixture of Experts activates only relevant neurons per input token — massive efficiency at large scale.</p>
+    </div>
+  </div>
+</section>
+
+<!-- REAL WORLD -->
+<section id="realworld">
+  <div class="section-eyebrow">Case Studies</div>
+  <h2 class="section-title">Real-World<br>Implementation</h2>
+  <div class="rw-grid">
+    <div class="rw-card reveal">
+      <div class="rw-card-header">
+        <span class="rw-logo">Google</span>
+        <span class="rw-badge">Carbon-Aware</span>
+      </div>
+      <div class="rw-metric">40%<div class="rw-metric-label">carbon footprint reduction</div></div>
+      <p>Google implemented carbon-aware scheduling that shifts AI training workloads to times when renewable energy is most abundant on the grid — a scheduling-only solution with dramatic results.</p>
+    </div>
+    <div class="rw-card reveal reveal-delay-1">
+      <div class="rw-card-header">
+        <span class="rw-logo">Microsoft</span>
+        <span class="rw-badge">Renewable</span>
+      </div>
+      <div class="rw-metric">100%<div class="rw-metric-label">renewable energy at AI data centers</div></div>
+      <p>Microsoft powers all of its AI data centers with 100% renewable energy — setting the standard for clean-powered AI infrastructure and demonstrating that green AI at scale is achievable today.</p>
+    </div>
+    <div class="rw-card reveal">
+      <div class="rw-card-header">
+        <span class="rw-logo">OpenAI</span>
+        <span class="rw-badge">Efficiency</span>
+      </div>
+      <p style="color:rgba(255,255,255,.6);font-size:.82rem;line-height:1.7;">OpenAI significantly improved GPT-3.5 efficiency over its predecessor GPT-3 — demonstrating that successive model generations can achieve better performance with reduced per-token energy costs.</p>
+      <div class="rw-metric" style="font-size:1.8rem;">GPT-3.5<div class="rw-metric-label">significantly more efficient than GPT-3</div></div>
+    </div>
+    <div class="rw-card reveal reveal-delay-1">
+      <div class="rw-card-header">
+        <span class="rw-logo">Infrastructure</span>
+        <span class="rw-badge">NVIDIA A100</span>
+      </div>
+      <div class="rw-metric">400W<div class="rw-metric-label">per GPU unit at full load</div></div>
+      <p>Understanding hardware-level consumption is key. A single NVIDIA A100 draws 400W; cooling infrastructure adds approximately 40% on top of compute costs — making hardware selection a sustainability decision.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ROADMAP -->
+<section id="roadmap">
+  <div class="section-eyebrow">Implementation</div>
+  <h2 class="section-title">Roadmap: Phase 1</h2>
+  <p class="section-body">A structured 7-week audit and optimization plan targeting 30–50% energy reduction.</p>
+  <div class="roadmap-steps">
+    <div class="roadmap-step reveal">
+      <div class="step-week">Week 1</div>
+      <div class="step-dot"></div>
+      <div class="step-title">Energy Audit</div>
+      <div class="step-desc">Comprehensive energy consumption audit across all AI systems, identifying GPU usage patterns and data center overhead.</div>
+    </div>
+    <div class="roadmap-step reveal reveal-delay-1">
+      <div class="step-week">Week 3</div>
+      <div class="step-dot"></div>
+      <div class="step-title">Baseline Metrics</div>
+      <div class="step-desc">Establish kWh per token, CO₂ per query, and cooling system efficiency ratios as measurable baselines.</div>
+    </div>
+    <div class="roadmap-step reveal reveal-delay-2">
+      <div class="step-week">Week 5</div>
+      <div class="step-dot"></div>
+      <div class="step-title">Optimization Mapping</div>
+      <div class="step-desc">Identify high-impact opportunities through token analysis and model efficiency assessments across workloads.</div>
+    </div>
+    <div class="roadmap-step reveal reveal-delay-3">
+      <div class="step-week">Week 7</div>
+      <div class="step-dot"></div>
+      <div class="step-title">Phase 1 Complete</div>
+      <div class="step-desc">Deliver audit report with prioritized recommendations and projected 30–50% energy reduction targets for Phase 2.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ACTIONS -->
+<section id="actions">
+  <div class="section-eyebrow">Act Now</div>
+  <h2 class="section-title">Immediate<br>Actions</h2>
+  <div class="actions-grid">
+    <div class="action-card reveal">
+      <div class="action-icon">⚡</div>
+      <h3>Token-Efficient Prompting</h3>
+      <p>Reduce prompts by 30–50% through concise language, eliminating redundancy, and optimized system messages. The easiest, highest-impact first step.</p>
+    </div>
+    <div class="action-card reveal reveal-delay-1">
+      <div class="action-icon">🌤️</div>
+      <h3>Carbon-Aware Scheduling</h3>
+      <p>Schedule training during low-carbon grid periods, achieving up to 40% footprint reduction without changing a single line of model code.</p>
+    </div>
+    <div class="action-card reveal reveal-delay-2">
+      <div class="action-icon">🗜️</div>
+      <h3>Model Compression</h3>
+      <p>Reduce computational overhead through pruning, quantization, and knowledge distillation — smaller models, same results.</p>
+    </div>
+    <div class="action-card reveal reveal-delay-3">
+      <div class="action-icon">📊</div>
+      <h3>Energy Monitoring</h3>
+      <p>Track and report energy consumption metrics to establish baselines and measure optimization impact over time. You can't improve what you don't measure.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <span class="footer-leaf">🌿</span>
+  <div class="footer-title">Sustainable Tokens for AI</div>
+  <div class="footer-sub">Energy Efficiency in AI Systems</div>
+  <div class="footer-meta">
+    Presented by <span>Mevada Nandini</span> · Enrollment No. <span>2501442052</span><br>
+    Semester 4 · Division E · Sustainable Energy Project
+  </div>
+</footer>
+
+<script>
+  // Intersection Observer for reveal animations
+  const reveals = document.querySelectorAll('.reveal');
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        revealObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  reveals.forEach(el => revealObserver.observe(el));
+
+  // Animate bar fills when section enters view
+  const bars = document.querySelectorAll('.bar-fill');
+  const barObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.style.width = entry.target.dataset.width + '%';
+        barObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.3 });
+  bars.forEach(bar => barObserver.observe(bar));
+
+  // Counter animation for stats strip
+  function animateCounter(el) {
+    const target = parseFloat(el.dataset.target);
+    const suffix = el.dataset.suffix || '';
+    const isDecimal = target % 1 !== 0;
+    const duration = 1800;
+    const start = performance.now();
+    function update(now) {
+      const elapsed = now - start;
+      const progress = Math.min(elapsed / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 4);
+      const val = target * eased;
+      el.textContent = (isDecimal ? val.toFixed(1) : Math.round(val).toLocaleString()) + suffix;
+      if (progress < 1) requestAnimationFrame(update);
+    }
+    requestAnimationFrame(update);
+  }
+  const statNums = document.querySelectorAll('.stat-number[data-target]');
+  const statsObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        animateCounter(entry.target);
+        statsObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.5 });
+  statNums.forEach(el => statsObserver.observe(el));
+
+  // Active nav link on scroll
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('.nav-links a');
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(sec => {
+      if (window.scrollY >= sec.offsetTop - 120) current = sec.id;
+    });
+    navLinks.forEach(a => {
+      a.style.color = a.getAttribute('href') === '#' + current
+        ? 'var(--teal-glow)' : '';
+    });
+  });
+</script>
+</body>
+</html>
